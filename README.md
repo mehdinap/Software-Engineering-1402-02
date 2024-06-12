@@ -33,7 +33,7 @@ You are free to use any language but keep in mind:
 
 ### Structure Guidelines
 
-In the main branch of the repo, there is a folder for each team. Each folder is for a separate project.
+In the main branch of the repo in `src` directory, there is a folder for each team. Each folder is for a separate project.
 Please just change your folder and put all the items related to your project in the same folder.
 If you need to change the rest of the sections, please ensure [coordination first](#question-or-problem).
 
