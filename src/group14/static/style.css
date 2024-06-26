@@ -1,0 +1,114 @@
+input {
+	opacity: 0;
+}
+
+label {
+	cursor: pointer;
+}
+
+body {
+	width: 100vw;
+	height: 100vh;
+	margin: 0;
+	color: #111;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+    flex-direction: row;
+    gap: 40px;
+	font: optima, sans-serif;
+	font-size: 40px;
+	background: linear-gradient(to right, #0288D1 0% ,#03A9F4 50%, #B3E5FC 100%);
+}
+
+.box {
+	position: relative;
+	width: 250px;
+	height: calc(250px / 100 * 75);
+	perspective: 750px;
+}
+
+.box span::before,
+.box span::after,
+.box::before,
+.box::after {
+	position: absolute;
+	content: "";
+	border-radius: calc(150px / 100 * 5);
+}
+
+.box::before {
+	width: 100%;
+	height: 92%;
+	bottom: 0;
+	background-color: #E040FB;
+}
+
+.box::after {
+	top: 0;
+	left: 0;
+	width: 40%;
+	height: 50%;
+	background-color: #E040FB;
+	z-index: 1;
+}
+
+.box span::before {
+	background-color: #eaa8f5;
+	width: 100%;
+	height: 92%;
+	bottom: 0;
+	left: 0;
+	z-index: 3;
+	-webkit-transition: -webkit-transform 500ms ease 0ms;
+	transition: -webkit-transform 500ms ease 0ms;
+	transition: transform 500ms ease 0ms;
+	transition: transform 500ms ease 0ms, -webkit-transform 500ms ease 0ms;
+	-webkit-transform-origin: 0 100% 0;
+	transform-origin: 0 100% 0;
+	outline: 1px solid transparent;
+	-webkit-transform-style: preserve-3d;
+	transform-style: preserve-3d;
+	display: -webkit-box;
+	display: flex;
+	-webkit-box-align: center;
+	align-items: center;
+	-webkit-box-pack: center;
+	justify-content: center;
+}
+
+.box span::after {
+	width: 90%;
+	height: 85%;
+	bottom: 0;
+	left: 0;
+	margin-left: 10px;
+	background-color: #fff;
+	z-index: 2;
+	transition: transform 250ms ease 0ms;
+	transform: translate3d(0px, 0px, 0px);
+}
+
+.box span::before {
+	transform: rotateX(-35deg);
+}
+
+.first-box span::before{
+	content: "Box 1";
+}
+
+.second-box span::before{
+	content: "Box 2";
+}
+
+.third-box span::before{
+	content: "Box 3";
+}
+
+.fourth-box span::before{
+	content: "Box 4";
+}
+
+.fifth-box span::before{
+	content: "Box 5";
+}
