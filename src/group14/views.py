@@ -1,10 +1,27 @@
-# group14/views.py
-
 from django.shortcuts import render
-from django.http import HttpResponse
-from database.query import create_db_connection, get_posts_by_user_id
-from database.secret import DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import *
+import json
 
-# Create your views here.
+
 def home(request):
     return render(request, 'group14/home.html')
+
+
+@csrf_exempt
+def add_new_card(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        front = data["front"]
+        is_unique = is_front_unique(front)
+        if not is_unique:
+            return JsonResponse({'error': 'front value is not unique'})
+        back = data["back"]
+        # hard code
+        user_id = 1
+        create_card(front,back,user_id)
+        return JsonResponse({'message': 'card created successfully'})
+    else:
+        return JsonResponse({'error': 'only POST requests are allowed'})
+
