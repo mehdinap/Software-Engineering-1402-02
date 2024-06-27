@@ -37,14 +37,25 @@
             <div class="close-button" onclick="closeForm()">x</div>
             <div class="form-title">Add a new Card</div>
             <div class="input-group">
-                <input type="text" id="front" onblur="checkInput(this)"/>
+                <input type="text" id="front" onblur="checkFrontInput(this)" oninput="updateFront(this)"/>
                 <label for="front">Front</label>
+                <label for="front" id="front_error"></label>
             </div>
             <div class="input-group">
-                <input type="text" id="back" onblur="checkInput(this)"/>
+                <input type="text" id="back" onblur="checkBackInput(this)" oninput="updateBack(this)"/>
                 <label for="back">Back</label>
             </div>
-            <div class="form-button" onclick="closeForm()">Add Card</div>
+            <div class="form-button" id="add-card-btn">Add Card</div>
+            <div class="card">
+                <div class="content">
+                    <div class="front">
+                        [Front!]
+                    </div>
+                    <div class="back">
+                        [Back!]
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="break"></div>
