@@ -7,4 +7,3 @@ pillow
 django-storages
 boto3
 mysql-connector-python
-mysqlclient==2.2.4
