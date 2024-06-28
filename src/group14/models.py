@@ -82,12 +82,31 @@ def create_card(front,back,user_id):
     finally:
         my_cursor.close()
 
+def update_card(front,back,card_id):
+    mydb = get_db_connection()
+    my_cursor = mydb.cursor()
+
+    update_card_query = """
+       UPDATE cards
+       SET front_value=%s, back_value=%s
+       WHERE id = %s;
+       """
+
+    try:
+        my_cursor.execute(update_card_query, (front, back, card_id))
+        mydb.commit()
+        print("Card saved successfully.")
+    except mysql.Error as err:
+        print("Failed to save card:", err)
+    finally:
+        my_cursor.close()
+
 def fetch_cards(user_id):
     mydb = get_db_connection()
     my_cursor = mydb.cursor()
 
     list_cards_query = """
-        SELECT front_value, back_value
+        SELECT id, front_value, back_value
         FROM cards
         WHERE user_id = %s;
         """

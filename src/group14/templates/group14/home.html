@@ -71,8 +71,48 @@
 <div id="cardsModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
-        <h4>cards</h4>
-        <div id="cardsContainer"></div>
+        <h4>Cards</h4>
+        <div class="fixed-header">
+            <div>Front Value</div>
+            <div>Back Value</div>
+        </div>
+        <div id="cardsContainer">
+            <!-- Card items will be dynamically added here -->
+            <div class="card-item" data-id="1">
+                <div class="card-content">
+                    <div class="front">Front Value 1</div>
+                    <div class="back">Back Value 1</div>
+                </div>
+                <div class="card-actions">
+                    <button class="edit-button" onclick="openEditForm({id: 1, front_value: 'Front Value 1', back_value: 'Back Value 1'})">Edit</button>
+                    <button class="delete-button" onclick="deleteCard(1)">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="editCardModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeEditForm()">&times;</span>
+        <h2>Edit Card</h2>
+        <input type="hidden" id="editCardId">
+        <div class="input-group">
+            <label for="editFront">Front</label>
+            <label for="editFront" id="edit_front_error" style="color: red;"></label>
+            <input type="text" id="editFront" onblur="checkFrontInput(this)">
+        </div>
+        <div class="input-group">
+            <label for="editBack">Back</label>
+            <input type="text" id="editBack">
+        </div>
+        <div class="form-button" id="saveEditBtn">Save</div>
+        <div class="card">
+            <div class="content">
+                <div class="front" id="editFrontPreview">[Front!]</div>
+                <div class="back" id="editBackPreview">[Back!]</div>
+            </div>
+        </div>
     </div>
 </div>
 
