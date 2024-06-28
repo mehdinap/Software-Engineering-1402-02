@@ -34,3 +34,17 @@ def list_cards(request):
         return JsonResponse(cards, safe=False)
     else:
         return JsonResponse({'error': 'only GET requests are allowed'})
+
+@csrf_exempt
+def edit_card(request, card_id):
+    if request.method == 'PUT':
+        data = json.loads(request.body)
+        front = data["front"]
+        is_unique = is_front_unique(front)
+        if not is_unique:
+            return JsonResponse({'error': 'front value is not unique'})
+        back = data["back"]
+        update_card(front, back, card_id)
+        return JsonResponse({'message': 'card updated successfully'})
+    else:
+        return JsonResponse({'error': 'only PUT requests are allowed'})

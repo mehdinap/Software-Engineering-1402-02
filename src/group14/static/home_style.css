@@ -366,47 +366,58 @@ body {
   margin-top: 20px;
 }
 
-.card {
+.card-item {
   position: relative;
-  width: 200px;
-  height: 100px;
-  perspective: 1000px;
-}
-
-.content {
-  position: absolute;
   width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  transition: transform 0.5s;
-}
-
-.card:hover .content {
-  transform: rotateY(180deg);
-}
-
-.front,
-.back {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  background: white;
+  height: auto;
+  background: rgba(255, 255, 255, 0.8);
   color: #03446A;
-  text-align: center;
-  font-size: 30px;
   border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 10px;
   display: flex;
-  align-items: center; /* Center vertically */
-  justify-content: center; /* Center horizontally */
-  backface-visibility: hidden;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
+  flex-direction: column;
+  justify-content: space-between;
+  backdrop-filter: blur(10px);
 }
 
-.back {
-  background-color: #03446A;
+.card-item .card-content {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 0;
+}
+
+.card-item .card-content div {
+  flex: 1;
+  text-align: center;
+  font-size: 24px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.9);
+  margin: 0 5px;
+}
+
+.card-item .card-content .front {
+  background-color: rgba(227, 242, 253, 0.9);
+}
+
+.card-item .card-content .back {
+  background-color: rgba(255, 243, 224, 0.9);
+}
+
+/* Fixed header for the columns */
+.fixed-header {
+  position: sticky;
+  top: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 2px solid #ccc;
   color: white;
-  transform: rotateY(180deg);
+  text-transform: uppercase;
 }
 
 .modal {
@@ -458,4 +469,131 @@ body {
   color: black;
   text-decoration: none;
   cursor: pointer;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.edit-button, .delete-button {
+  padding: 5px 10px;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  flex: 0 1 auto;
+  transition: background-color 0.2s;
+}
+
+.edit-button {
+  background-color: #31ee10d4;
+}
+
+.edit-button:hover {
+  background-color: #08c117c4;
+}
+
+.delete-button {
+  background-color: #ff4d4d;
+}
+
+.delete-button:hover {
+  background-color: #d32f2f;
+}
+
+.success-message {
+  color: green;
+  font-size: 16px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+#editCardModal .input-group {
+  width: 100%;
+  font-size: 16px;
+  max-width: 400px;
+  padding-top: 20px;
+  position: relative;
+  margin-bottom: 15px;
+}
+
+#editCardModal .input-group input {
+  width: 100%;
+  color: white;
+  border: none;
+  outline: none;
+  padding: 5px 0;
+  line-height: 1;
+  font-size: 16px;
+  border-bottom: solid 1px white;
+  background-color: transparent;
+  transition: box-shadow 0.2s ease-in;
+}
+
+#editCardModal .input-group input + label {
+  left: 0;
+  top: 20px;
+  position: absolute;
+  pointer-events: none;
+  transition: all 0.2s ease-in;
+}
+
+#editCardModal .input-group input:focus {
+  box-shadow: 0 1px 0 0 white;
+}
+
+#editCardModal .input-group input:focus + label,
+#editCardModal .input-group input.active + label {
+  font-size: 12px;
+  transform: translateY(-20px);
+}
+
+.card {
+  position: relative;
+  width: 300px;
+  height: 150px;
+  margin: 20px;
+  perspective: 1000px;
+}
+
+.content {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.5s;
+}
+
+.card:hover .content {
+  transform: rotateY(180deg);
+}
+
+.front,
+.back {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background: white;
+  color: #03446A;
+  text-align: center;
+  font-size: 30px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally */
+  backface-visibility: hidden;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.back {
+  background-color: #03446A;
+  color: white;
+  transform: rotateY(180deg);
+}
+
+#front_error, #edit_front_error {
+  color: #da4141;
 }

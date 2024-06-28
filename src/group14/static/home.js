@@ -140,18 +140,40 @@ document.getElementById('list-cards-btn').addEventListener('click', function () 
 
             data.forEach(card => {
                 let cardElement = document.createElement('div');
-                cardElement.className = 'card';
+                cardElement.className = 'card-item';
+                cardElement.dataset.id = card.id;
+
                 let contentElement = document.createElement('div');
-                contentElement.className = 'content';
+                contentElement.className = 'card-content';
                 let frontElement = document.createElement('div');
-                frontElement.className = 'front';
+                frontElement.className = 'Front: ${card.front_value}';
                 frontElement.textContent = card.front_value;
                 let backElement = document.createElement('div');
-                backElement.className = 'back';
+                backElement.className = 'Back: ${card.back_value}';
                 backElement.textContent = card.back_value;
+
                 contentElement.appendChild(frontElement);
                 contentElement.appendChild(backElement);
                 cardElement.appendChild(contentElement);
+
+                let actionsElement = document.createElement('div');
+                actionsElement.className = 'card-actions';
+                // Add edit button
+                let editButton = document.createElement('button');
+                editButton.className = 'edit-button';
+                editButton.textContent = 'Edit';
+                editButton.addEventListener('click', () => openEditForm(card));
+                cardElement.appendChild(editButton);
+
+                // Add delete button
+                let deleteButton = document.createElement('button');
+                deleteButton.className = 'delete-button';
+                deleteButton.textContent = 'Delete';
+                deleteButton.addEventListener('click', () => deleteCard(card.id));
+                cardElement.appendChild(deleteButton);
+                
+                cardElement.appendChild(actionsElement);
+
                 cardsContainer.appendChild(cardElement);
             });
             let modal = document.getElementById('cardsModal');
@@ -162,16 +184,157 @@ document.getElementById('list-cards-btn').addEventListener('click', function () 
         });
 });
 
-// Function to close the modal
+window.onclick = function(event) {
+    let modal = document.getElementById('cardsModal');
+    let edit_modal = document.getElementById('editCardModal');
+    
+    if (event.target == cardsModal) {
+        cardsModal.style.display = "none";
+    }
+    if (event.target == editCardModal) {
+        closeEditForm();
+    }
+}
+
 function closeModal() {
     let modal = document.getElementById('cardsModal');
     modal.style.display = "none";
 }
 
-// Close the modal when the user clicks anywhere outside of it
-window.onclick = function(event) {
-    let modal = document.getElementById('cardsModal');
-    if (event.target == modal) {
-        modal.style.display = "none";
+let openEditForm = function(card) {
+    let editForm = document.getElementById('editCardModal');
+    document.getElementById('editCardId').value = card.id;
+    document.getElementById('editFront').value = card.front_value;
+    document.getElementById('editBack').value = card.back_value;
+    document.getElementById('editFrontPreview').textContent = card.front_value;
+    document.getElementById('editBackPreview').textContent = card.back_value;
+    editForm.style.display = "block";
+};
+
+let closeEditForm = function() {
+    let editForm = document.getElementById('editCardModal');
+    editForm.style.display = 'none'
+    clearEditError();
+    clearEditInputs();
+};
+
+document.getElementById('saveEditBtn').addEventListener('click', function () {
+    const csrftoken = getCookie('csrftoken');
+    const cardId = document.getElementById('editCardId').value;
+    const updatedFront = document.getElementById('editFront').value;
+    const updatedBack = document.getElementById('editBack').value;
+    let errorLabel = document.getElementById("edit_front_error");
+
+    if (updatedFront === '') {
+        errorLabel.textContent = 'Front value can\'t be empty';
+        errorLabel.style.display = 'block';
+    } else {
+        errorLabel.style.display = 'none';
+        const data = {
+            id: cardId,
+            front: updatedFront,
+            back: updatedBack,
+        };
+        fetch(`/group14/edit-card/${cardId}/`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Update the card in the modal
+            let frontElement = document.querySelector(`.card-item[data-id='${cardId}']`);
+            let backElement = document.querySelector(`.card-item[data-id='${cardId}']`);
+            
+            if (frontElement) {
+                //frontElement.textContent = updatedFront;
+            } else {
+                console.error('Front element not found');
+            }
+
+            if (backElement) {
+                //backElement.textContent = updatedBack;
+            } else {
+                console.error('Back element not found');
+            }
+
+            // TODO: success message is not shown
+
+            // Show success message
+            let successMessage = document.createElement('div');
+            successMessage.className = 'success-message';
+            successMessage.textContent = 'Card updated successfully!';
+            document.querySelector('#editCardModal .modal-content').appendChild(successMessage);
+        
+            // Remove success message after 2 seconds
+            setTimeout(() => {
+                successMessage.remove();
+            }, 2000);
+
+            closeEditForm();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+});
+
+function clearEditError() {
+    let errorLabel = document.getElementById("edit_front_error");
+    errorLabel.textContent = '';
+    errorLabel.style.display = 'none';
+}
+
+function clearEditInputs() {
+    document.getElementById("editFront").value = '';
+    document.getElementById("editBack").value = '';
+}
+
+function deleteCard(cardId) {
+    const csrftoken = getCookie('csrftoken');
+
+    fetch(`/group14/delete-card/${cardId}/`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            let cardElement = document.querySelector(`.card[data-id='${cardId}']`);
+            cardElement.remove();
+        } else {
+            console.error('Error deleting card:', data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function updateEditFront(input) {
+    let frontText = input.value.trim();
+    let frontElement = document.getElementById('editFrontPreview');
+    if (frontText !== '') {
+        frontElement.textContent = frontText;
+    } else {
+        frontElement.textContent = '[Front!]';
+    }
+}
+
+// TODO: preview is not well located
+
+function updateEditBack(input) {
+    let backText = input.value.trim();
+    let backElement = document.getElementById('editBackPreview');
+    if (backText !== '') {
+        backElement.textContent = backText;
+    } else {
+        backElement.textContent = '[Back!]';
     }
 }
