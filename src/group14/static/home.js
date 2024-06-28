@@ -122,3 +122,56 @@ function clearInputs() {
     let backElement = document.querySelector('.back');
     backElement.textContent = '[Back!]';
 }
+
+document.getElementById('list-cards-btn').addEventListener('click', function () {
+    const csrftoken = getCookie('csrftoken');
+    fetch('/group14/list-cards/',
+        {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            let cardsContainer = document.getElementById('cardsContainer');
+            cardsContainer.innerHTML = '';  // Clear any existing content
+
+            data.forEach(card => {
+                let cardElement = document.createElement('div');
+                cardElement.className = 'card';
+                let contentElement = document.createElement('div');
+                contentElement.className = 'content';
+                let frontElement = document.createElement('div');
+                frontElement.className = 'front';
+                frontElement.textContent = card.front_value;
+                let backElement = document.createElement('div');
+                backElement.className = 'back';
+                backElement.textContent = card.back_value;
+                contentElement.appendChild(frontElement);
+                contentElement.appendChild(backElement);
+                cardElement.appendChild(contentElement);
+                cardsContainer.appendChild(cardElement);
+            });
+            let modal = document.getElementById('cardsModal');
+            modal.style.display = "block";
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+});
+
+// Function to close the modal
+function closeModal() {
+    let modal = document.getElementById('cardsModal');
+    modal.style.display = "none";
+}
+
+// Close the modal when the user clicks anywhere outside of it
+window.onclick = function(event) {
+    let modal = document.getElementById('cardsModal');
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
