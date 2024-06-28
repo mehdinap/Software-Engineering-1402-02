@@ -25,3 +25,12 @@ def add_new_card(request):
     else:
         return JsonResponse({'error': 'only POST requests are allowed'})
 
+@csrf_exempt
+def list_cards(request):
+    if request.method == 'GET':
+        # hard code
+        user_id = 1
+        cards = fetch_cards(user_id)
+        return JsonResponse(cards, safe=False)
+    else:
+        return JsonResponse({'error': 'only GET requests are allowed'})

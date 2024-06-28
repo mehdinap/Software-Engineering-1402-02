@@ -81,3 +81,29 @@ def create_card(front,back,user_id):
         print("Failed to insert user:", err)
     finally:
         my_cursor.close()
+
+def fetch_cards(user_id):
+    mydb = get_db_connection()
+    my_cursor = mydb.cursor()
+
+    list_cards_query = """
+        SELECT front_value, back_value
+        FROM cards
+        WHERE user_id = %s;
+        """
+    
+    try:
+        my_cursor.execute(list_cards_query, (user_id,))
+        rows = my_cursor.fetchall()
+        columns = [col[0] for col in my_cursor.description]
+        cards = [
+            dict(zip(columns, row))
+            for row in rows
+        ]
+
+        print("Cards retreived successfully.")
+    except mysql.Error as err:
+        print("Failed to list cards:", err)
+    finally:
+        my_cursor.close()
+    return cards
