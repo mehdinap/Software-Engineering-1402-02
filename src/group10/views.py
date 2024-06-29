@@ -1,14 +1,9 @@
-from django.contrib.auth import login
-from django.contrib.auth.models import User
 import requests
-from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
 from django.shortcuts import render
 import base64
-
+from .models import Course, Video, Exam, Question
 from .forms import SignUpForm, SignInForm, CourseForm, VideoForm, ExamForm, QuestionForm
 
 
@@ -112,16 +107,6 @@ def courses(request):
         return redirect(reverse("index_page"))
 
 
-class Video:
-    def __init__(self, id, title):
-        self.id = id
-        self.title = title
-        self.video_file = None
-
-    def set_video_file(self, video_file):
-        self.video_file = video_file
-
-
 def course_page(request, id):
     if is_authenticated(request):
 
@@ -173,18 +158,6 @@ def course_page(request, id):
         return render(request, 'group10/html_files/course_page.html', context=context)
     else:
         return redirect(reverse("index_page"))
-
-
-class Course:
-    def __init__(self, name, description, objectives, id):
-        self.name = name
-        self.description = description
-        self.objectives = objectives
-        self.id = id
-        self.image_data = None
-
-    def set_image(self, image_data):
-        self.image_data = image_data
 
 
 C_SHARP_SERVER_URL = "http://your-csharp-server/api/courses/"
@@ -345,7 +318,8 @@ def exam_page(request, exam_id):
 
         exam_json = response.json()
 
-        exam = Exam(name=exam_json['name'],subjects= exam_json['subjects'], course_id=exam_json['courseId'],exam_id= exam_json['id'])
+        exam = Exam(name=exam_json['name'], subjects=exam_json['subjects'], course_id=exam_json['courseId'],
+                    exam_id=exam_json['id'])
 
         questions = []
 
@@ -353,13 +327,13 @@ def exam_page(request, exam_id):
         response = requests.get(url, verify=False)
         print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`")
         print(response.status_code)
-        json_data=response.json()
+        json_data = response.json()
 
         for question in json_data:
-
             questions.append(
-                Question(test_id=question['testId'],question= question['question'],option1= question['option1'], option2=question['option2'],
-                        option3= question['option3'], option4=question['option4'],category= question['category']))
+                Question(test_id=question['testId'], question=question['question'], option1=question['option1'],
+                         option2=question['option2'],
+                         option3=question['option3'], option4=question['option4'], category=question['category']))
         name = get_name(request)
 
         context = {
@@ -391,7 +365,7 @@ def add_question(request, exam_id):
                 }
 
                 url = "https://localhost:7071/question/add-question"
-                response = requests.post(url,json=question_data, verify=False)
+                response = requests.post(url, json=question_data, verify=False)
                 return redirect(reverse('exam_page', args=[exam_id]))
         else:
             form = QuestionForm()
@@ -409,20 +383,4 @@ def add_question(request, exam_id):
         return redirect(reverse("index_page"))
 
 
-class Exam:
-    def __init__(self, name, subjects, course_id, exam_id):
-        self.name = name
-        self.subjects = subjects
-        self.course_id = course_id
-        self.exam_id = exam_id
 
-
-class Question:
-    def __init__(self, test_id, question, option1, option2, option3, option4, category):
-        self.test_id = test_id
-        self.question = question
-        self.option1 = option1
-        self.option2 = option2
-        self.option3 = option3
-        self.option4 = option4
-        self.category = category

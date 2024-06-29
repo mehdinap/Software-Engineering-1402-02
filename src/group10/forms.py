@@ -1,7 +1,5 @@
 import re
-
 from django import forms
-from django.contrib.auth.models import User
 import requests
 
 
@@ -27,8 +25,6 @@ class SignUpForm(forms.Form):
         api_url = f'https://localhost:7071/Teacher/email-check/{email}'
         response = requests.post(api_url, verify=False)
         user_exists = False
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11")
-        print(response.status_code)
         if response.status_code == 400:
             user_exists = True
 
@@ -65,8 +61,6 @@ class SignInForm(forms.Form):
             url_str = "https://localhost:7071/Teacher/SignInWithEmail"
             try:
                 response = requests.post(url_str, json={'email': email, 'password': password}, verify=False)
-                print("**********************************************")
-                print(response.status_code)
                 if response.status_code == 200:
                     return cleaned_data
                 else:
