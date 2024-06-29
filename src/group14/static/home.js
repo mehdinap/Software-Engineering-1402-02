@@ -94,6 +94,7 @@ document.getElementById('add-card-btn').addEventListener('click', function () {
             .then(data => {
                 if (!data["error"]) {
                     closeForm()
+                    showSuccessMessage('Card added successfully!')
                 } else {
                     errorLabel.textContent = data["error"];
                     errorLabel.style.display = 'block';
@@ -143,6 +144,9 @@ document.getElementById('list-cards-btn').addEventListener('click', function () 
                 cardElement.className = 'card-item';
                 cardElement.dataset.id = card.id;
 
+                let actionsElement = document.createElement('div');
+                actionsElement.className = 'card-actions';
+
                 let contentElement = document.createElement('div');
                 contentElement.className = 'card-content';
                 let frontElement = document.createElement('div');
@@ -156,24 +160,21 @@ document.getElementById('list-cards-btn').addEventListener('click', function () 
                 contentElement.appendChild(backElement);
                 cardElement.appendChild(contentElement);
 
-                let actionsElement = document.createElement('div');
-                actionsElement.className = 'card-actions';
                 // Add edit button
                 let editButton = document.createElement('button');
                 editButton.className = 'edit-button';
                 editButton.textContent = 'Edit';
                 editButton.addEventListener('click', () => openEditForm(card));
-                cardElement.appendChild(editButton);
+                actionsElement.appendChild(editButton);
 
                 // Add delete button
                 let deleteButton = document.createElement('button');
                 deleteButton.className = 'delete-button';
                 deleteButton.textContent = 'Delete';
                 deleteButton.addEventListener('click', () => deleteCard(card.id));
-                cardElement.appendChild(deleteButton);
+                actionsElement.appendChild(deleteButton);
                 
                 cardElement.appendChild(actionsElement);
-
                 cardsContainer.appendChild(cardElement);
             });
             let modal = document.getElementById('cardsModal');
@@ -261,19 +262,7 @@ document.getElementById('saveEditBtn').addEventListener('click', function () {
                 console.error('Back element not found');
             }
 
-            // TODO: success message is not shown
-
-            // Show success message
-            let successMessage = document.createElement('div');
-            successMessage.className = 'success-message';
-            successMessage.textContent = 'Card updated successfully!';
-            document.querySelector('#editCardModal .modal-content').appendChild(successMessage);
-        
-            // Remove success message after 2 seconds
-            setTimeout(() => {
-                successMessage.remove();
-            }, 2000);
-
+            showSuccessMessage('Card edited successfully!')
             closeEditForm();
         })
         .catch(error => {
@@ -303,18 +292,38 @@ function deleteCard(cardId) {
             'X-CSRFToken': csrftoken,
         },
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => { throw new Error(text) });
+        }
+        return response.json();
+    })
     .then(data => {
-        if (data.success) {
-            let cardElement = document.querySelector(`.card[data-id='${cardId}']`);
+        
+        let cardElement = document.querySelector(`.card-item[data-id='${cardId}']`);
+
+        if (cardElement) {
             cardElement.remove();
+            showSuccessMessage('Card deleted successfully!');
         } else {
-            console.error('Error deleting card:', data.error);
+            console.error('Card element not found');
         }
     })
     .catch(error => {
         console.error('Error:', error);
     });
+}
+
+function showSuccessMessage(message) {
+    let successMessage = document.createElement('div');
+    successMessage.className = 'success-message';
+    successMessage.textContent = message;
+    document.body.appendChild(successMessage);
+
+    // Remove success message after 2 seconds
+    setTimeout(() => {
+        successMessage.remove();
+    }, 2000);
 }
 
 function updateEditFront(input) {
@@ -328,6 +337,7 @@ function updateEditFront(input) {
 }
 
 // TODO: preview is not well located
+// TODO: after success edit, modal is not updated
 
 function updateEditBack(input) {
     let backText = input.value.trim();

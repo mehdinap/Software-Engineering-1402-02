@@ -45,13 +45,17 @@ def create_card_table():
     create_table(mydb, query)
 
 
-def is_front_unique(front):
+def is_front_unique(front, excluded_card_id):
     mydb = get_db_connection()
     cursor = mydb.cursor()
     try:
-        query = f"SELECT * FROM cards WHERE front_value = %s"
-        cursor.execute(query, (front,))
-
+        if excluded_card_id is None:
+            query = f"SELECT * FROM cards WHERE front_value = %s"
+            cursor.execute(query, (front,))
+        else:
+            query = f"SELECT * FROM cards WHERE front_value = %s AND id != %s"
+            cursor.execute(query, (front, excluded_card_id))
+        
         result = cursor.fetchone()
 
         if result:
@@ -126,3 +130,21 @@ def fetch_cards(user_id):
     finally:
         my_cursor.close()
     return cards
+
+def delete_desired_card(card_id):
+    mydb = get_db_connection()
+    my_cursor = mydb.cursor()
+
+    delete_card_query = """
+       DELETE FROM cards
+       WHERE id = %s;
+       """
+
+    try:
+        my_cursor.execute(delete_card_query, (card_id,))
+        mydb.commit()
+        print("Card deleted successfully.")
+    except mysql.Error as err:
+        print("Failed to delete card:", err)
+    finally:
+        my_cursor.close()
