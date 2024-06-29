@@ -186,14 +186,21 @@ document.getElementById('list-cards-btn').addEventListener('click', function () 
 });
 
 window.onclick = function(event) {
-    let modal = document.getElementById('cardsModal');
-    let edit_modal = document.getElementById('editCardModal');
     
     if (event.target == cardsModal) {
         cardsModal.style.display = "none";
     }
     if (event.target == editCardModal) {
         closeEditForm();
+    }
+    if (event.target == sessionModal) {
+        closeSessionModal();
+    }
+    if (event.target == feedbackModal) {
+        closeFeedbackModal();
+    }
+    if (event.target == messageModal) {
+        closeMessageModal();
     }
 }
 
@@ -347,4 +354,169 @@ function updateEditBack(input) {
     } else {
         backElement.textContent = '[Back!]';
     }
+}
+
+document.getElementById('start-session-btn').addEventListener('click', function () {
+    const csrftoken = getCookie('csrftoken');
+    
+    fetch('/group14/learn-cards/', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        sessionMessage.textContent = data.message;
+        if (data.message === 'Ready to start the session.') {
+            document.getElementById('ready-btn').style.display = 'inline-block';
+            document.getElementById('next-session-btn').style.display = 'none';
+        } else if (data.message === 'No card to be reviewed. Click to go to the next session.') {
+            document.getElementById('next-session-btn').style.display = 'inline-block';
+            document.getElementById('ready-btn').style.display = 'none';
+        }
+        openSessionModal();
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+function openSessionModal() {
+    document.getElementById('sessionModal').style.display = 'block';
+}
+
+function closeSessionModal() {
+    document.getElementById('sessionModal').style.display = 'none';
+}
+
+function nextSession () {
+    const csrftoken = getCookie('csrftoken');
+    
+    fetch('/group14/increment-session/', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        sessionMessage.textContent = data.message;
+        showSuccessMessage("Proceeded to next session")
+        if (data.message === 'Ready to start the session.') {
+            document.getElementById('ready-btn').style.display = 'inline-block';
+            document.getElementById('next-session-btn').style.display = 'none';
+            openSessionModal();
+        } else if (data.message === 'No card to be reviewed. Click to go to the next session.') {
+            document.getElementById('next-session-btn').style.display = 'inline-block';
+            document.getElementById('ready-btn').style.display = 'none';
+        }
+    })
+    .catch(error => console.error('Error:', error));
+};
+
+function readySession() {
+    const csrftoken = getCookie('csrftoken');
+
+    fetch('/group14/learn-next-card/', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+        },
+    })
+    .then(response => response.json())
+    .then(card => {
+        if (card.message) {
+            alert(card.message);
+        } else {
+            document.getElementById('feedbackCard').querySelector('.front-text').textContent = card.front_value;
+            document.getElementById('feedbackCard').querySelector('.back-text').textContent = card.back_value;
+            document.getElementById('feedbackCard').querySelector('.front-id').dataset.id = card.id;
+        }
+        openFeedbackModal(card.front_value, card.back_value)
+    })
+    .catch(error => console.error('Error:', error));
+    closeSessionModal();
+}
+
+
+let backText = document.querySelector(".back-text");
+let frontText = document.querySelector(".front-text");
+
+function openFeedbackModal(cardFront, cardBack) {
+    let modal = document.getElementById('feedbackModal'); 
+    let feedbackCard = document.getElementById('feedbackCard');
+    frontText.textContent = cardFront;
+    backText.textContent = cardBack;
+    modal.style.display = 'block';
+    feedbackCard.classList.remove('flipped');
+}
+
+function closeFeedbackModal() {
+    document.getElementById('feedbackModal').style.display = 'none';
+}
+const feedbackButtons = document.getElementById('feedback-buttons');
+
+feedbackCard.addEventListener('click', function() {
+    if (!feedbackCard.classList.contains('flipped')) {
+        feedbackCard.classList.add('flipped');
+        feedbackButtons.classList.remove("hidden");
+    } else {
+        feedbackCard.classList.remove('flipped');
+        feedbackButtons.classList.add("hidden");
+    }
+});
+
+document.getElementById('feedbackCorrectBtn').addEventListener('click', function () {
+    feedbackButtons.classList.add("hidden");
+    sendFeedback(true);
+});
+
+document.getElementById('feedbackIncorrectBtn').addEventListener('click', function () {
+    feedbackButtons.classList.add("hidden");
+    sendFeedback(false);
+});
+
+function sendFeedback(correctGuess) {
+    const cardId = document.getElementById('feedbackCard').querySelector('.front-id').dataset.id;
+    const csrftoken = getCookie('csrftoken');
+
+    fetch(`/group14/learn-feedback/${cardId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+        },
+        body: JSON.stringify({ guess: correctGuess }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            document.getElementById('start-session-btn').style.display = 'inline-block';
+            document.getElementById('ready-btn').style.display = 'none';
+            document.getElementById('next-session-btn').style.display = 'none';
+            closeFeedbackModalAndShowMessage(data.message);
+        } else {
+            document.getElementById('feedbackCard').querySelector('.front-text').textContent = data.front_value;
+            document.getElementById('feedbackCard').querySelector('.back-text').textContent = data.back_value;
+            document.getElementById('feedbackCard').querySelector('.front-id').dataset.id = data.id;
+            openFeedbackModal(data.front_value, data.back_value)
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function closeMessageModal() {
+    document.getElementById('messageModal').style.display = 'none';
+}
+
+function showMessageModal(message) {
+    document.getElementById('messageContent').textContent = message;
+    document.getElementById('messageModal').style.display = 'block';
+}
+
+function closeFeedbackModalAndShowMessage(message) {
+    closeFeedbackModal();
+    showMessageModal(message);
 }
