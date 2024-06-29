@@ -14,7 +14,7 @@ def add_new_card(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         front = data["front"]
-        is_unique = is_front_unique(front)
+        is_unique = is_front_unique(front, None)
         if not is_unique:
             return JsonResponse({'error': 'front value is not unique'})
         back = data["back"]
@@ -40,7 +40,7 @@ def edit_card(request, card_id):
     if request.method == 'PUT':
         data = json.loads(request.body)
         front = data["front"]
-        is_unique = is_front_unique(front)
+        is_unique = is_front_unique(front, card_id)
         if not is_unique:
             return JsonResponse({'error': 'front value is not unique'})
         back = data["back"]
@@ -48,3 +48,11 @@ def edit_card(request, card_id):
         return JsonResponse({'message': 'card updated successfully'})
     else:
         return JsonResponse({'error': 'only PUT requests are allowed'})
+    
+@csrf_exempt
+def delete_card(request, card_id):
+    if request.method == 'DELETE':
+        delete_desired_card(card_id)
+        return JsonResponse({'message': 'card deleted successfully'})
+    else:
+        return JsonResponse({'error': 'only DELETE requests are allowed'})
