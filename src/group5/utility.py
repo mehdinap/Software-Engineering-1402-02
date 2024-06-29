@@ -1,12 +1,5 @@
 import random
 
-'''class word'''
-# class Word:
-#     def __init__(self, word, definition):
-#         self.word = word
-#         self.definition = definition
-#
-
 class WordListProxy:
     def __init__(self, words):
         self.words = words
