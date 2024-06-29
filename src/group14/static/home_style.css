@@ -1,6 +1,7 @@
-label {
+/* TODO: Boxed are useless for now */
+/* label {
 	cursor: pointer;
-}
+} */
 
 body {
 	width: 100vw;
@@ -631,7 +632,12 @@ body {
   transform: translateY(-20px);
 }
 
-.card-preview {
+#editCardModal .form-button {
+  display: inline-block; /* Ensure the button takes up only its content size */
+  margin-bottom: 10px; /* Provide space between the button and the card */
+}
+
+#editCardModal .card {
   position: absolute;
   right: 20px;
   top: 20px;
@@ -639,9 +645,11 @@ body {
   height: 150px;
   margin: 20px;
   perspective: 1000px;
+  display: inline-block; /* Display the card inline with other elements */
+  vertical-align: top; /* Align the card content to the top */
 }
 
-.card-preview .content {
+#editCardModal .card .content {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -649,12 +657,12 @@ body {
   transition: transform 0.5s;
 }
 
-.card-preview .card:hover .content {
+#editCardModal .card .card:hover .content {
   transform: rotateY(180deg);
 }
 
-.card-preview .front,
-.card-preview .back {
+#editCardModal .card .front,
+#editCardModal .card .back {
   position: absolute;
   height: 100%;
   width: 100%;
@@ -671,7 +679,7 @@ body {
   overflow-wrap: break-word;
 }
 
-.card-preview .back {
+#editCardModal .card .back {
   background-color: #03446A;
   color: white;
   transform: rotateY(180deg);

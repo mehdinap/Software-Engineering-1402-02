@@ -124,7 +124,9 @@ function clearInputs() {
     backElement.textContent = '[Back!]';
 }
 
-document.getElementById('list-cards-btn').addEventListener('click', function () {
+document.getElementById('list-cards-btn').addEventListener('click', fetchAndDisplayCards);
+
+function fetchAndDisplayCards() {
     const csrftoken = getCookie('csrftoken');
     fetch('/group14/list-cards/',
         {
@@ -150,10 +152,12 @@ document.getElementById('list-cards-btn').addEventListener('click', function () 
                 let contentElement = document.createElement('div');
                 contentElement.className = 'card-content';
                 let frontElement = document.createElement('div');
-                frontElement.className = 'Front: ${card.front_value}';
+                frontElement.className = 'updatedFront';
+                frontElement.id = 'updatedFront';
                 frontElement.textContent = card.front_value;
                 let backElement = document.createElement('div');
-                backElement.className = 'Back: ${card.back_value}';
+                backElement.className = 'updatedBack';
+                backElement.id = 'updatedBack';
                 backElement.textContent = card.back_value;
 
                 contentElement.appendChild(frontElement);
@@ -183,7 +187,7 @@ document.getElementById('list-cards-btn').addEventListener('click', function () 
         .catch(error => {
             console.error('Error:', error);
         });
-});
+};
 
 window.onclick = function(event) {
     
@@ -211,11 +215,28 @@ function closeModal() {
 
 let openEditForm = function(card) {
     let editForm = document.getElementById('editCardModal');
-    document.getElementById('editCardId').value = card.id;
-    document.getElementById('editFront').value = card.front_value;
-    document.getElementById('editBack').value = card.back_value;
-    document.getElementById('editFrontPreview').textContent = card.front_value;
-    document.getElementById('editBackPreview').textContent = card.back_value;
+    let editCardIdInput = document.getElementById('editCardId');
+    let editFrontInput = document.getElementById('editFront');
+    let editBackInput = document.getElementById('editBack');
+    let editFrontPreview = document.getElementById('editFrontPreview');
+    let editBackPreview = document.getElementById('editBackPreview');
+
+    // Set values from card data
+    editCardIdInput.value = card.id;
+    editFrontInput.value = card.front_value;
+    editBackInput.value = card.back_value;
+    editFrontPreview.textContent = card.front_value;
+    editBackPreview.textContent = card.back_value;
+
+    // Add event listeners to update previews
+    editFrontInput.addEventListener('input', function() {
+        editFrontPreview.textContent = this.value;
+    });
+
+    editBackInput.addEventListener('input', function() {
+        editBackPreview.textContent = this.value;
+    });
+
     editForm.style.display = "block";
 };
 
@@ -224,6 +245,7 @@ let closeEditForm = function() {
     editForm.style.display = 'none'
     clearEditError();
     clearEditInputs();
+    fetchAndDisplayCards();
 };
 
 document.getElementById('saveEditBtn').addEventListener('click', function () {
@@ -254,17 +276,18 @@ document.getElementById('saveEditBtn').addEventListener('click', function () {
         .then(response => response.json())
         .then(data => {
             // Update the card in the modal
-            let frontElement = document.querySelector(`.card-item[data-id='${cardId}']`);
-            let backElement = document.querySelector(`.card-item[data-id='${cardId}']`);
+            showSuccessMessage(data.message)
+            let frontElement = document.querySelector('.updatedFront');
+            let backElement = document.querySelector('.updatedBack');
             
             if (frontElement) {
-                //frontElement.textContent = updatedFront;
+                frontElement.textContent = updatedFront;
             } else {
                 console.error('Front element not found');
             }
 
             if (backElement) {
-                //backElement.textContent = updatedBack;
+                backElement.textContent = updatedBack;
             } else {
                 console.error('Back element not found');
             }
