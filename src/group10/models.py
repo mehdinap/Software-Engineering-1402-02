@@ -33,8 +33,9 @@ class Exam:
 
 
 class Question:
-    def __init__(self, test_id, question, option1, option2, option3, option4, category):
+    def __init__(self, test_id, id, question, option1, option2, option3, option4, category):
         self.test_id = test_id
+        self.id = id
         self.question = question
         self.option1 = option1
         self.option2 = option2
