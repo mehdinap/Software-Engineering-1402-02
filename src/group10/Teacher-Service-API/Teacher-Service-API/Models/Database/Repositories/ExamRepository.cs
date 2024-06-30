@@ -9,10 +9,10 @@ namespace Teacher_Service_API.Models.Database.Repositories
     public class ExamRepository
     {
         private readonly DatabaseManager _databaseManager = new DatabaseManager();
-
+        private readonly QuestionRepository _questionRepository = new QuestionRepository();
         public string AddExam(ExamDTO examDTO)
         {
-            var query = "insert into exams(id, name, subjects, courseId) values (@id, @name, @subjects, @courseId)";
+            var query = "insert into group10_exams(id, name, subjects, courseId) values (@id, @name, @subjects, @courseId)";
             var id = Guid.NewGuid().ToString();
             using(var connection = _databaseManager.GetConnection())
             {
@@ -30,7 +30,7 @@ namespace Teacher_Service_API.Models.Database.Repositories
         public List<ExamDTO> GetAllExamsOfCourse(string courseId)
         {
             var result = new List<ExamDTO>();
-            var query = "select * from exams where courseId = @courseId";
+            var query = "select * from group10_exams where courseId = @courseId";
             using(var connection = _databaseManager.GetConnection())
             {
                 connection.Open();
@@ -52,7 +52,7 @@ namespace Teacher_Service_API.Models.Database.Repositories
 
         public ExamDTO GetExamById(string id)
         {
-            var query = "select * from exams where id = @id";
+            var query = "select * from group10_exams where id = @id";
             using (var connection = _databaseManager.GetConnection())
             {
                 connection.Open();
@@ -70,6 +70,34 @@ namespace Teacher_Service_API.Models.Database.Repositories
                 }
                 return new ExamDTO("", "", "", "");
             }
+        }
+
+        public bool DeleteExam(string id)
+        {
+            _questionRepository.DeleteAllQuestionsOfExam(id);
+            var query = "delete from group10_exams where id = @id";
+            using (var connection = _databaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = new MySqlCommand(query, connection);
+                command.Parameters.AddWithValue("@id", id);
+                return command.ExecuteNonQuery() > 0;
+            }
+        }
+
+        public bool DeleteAllExamsOfCourse(string courseId)
+        {
+            // Delete all exams of a course using DeleteExam method
+            var resutl = true;
+            var exams = GetAllExamsOfCourse(courseId);
+            foreach (var exam in exams)
+            {
+                if (!DeleteExam(exam.Id))
+                {
+                    resutl = false;
+                }
+            }
+            return resutl;
         }
     }
 }

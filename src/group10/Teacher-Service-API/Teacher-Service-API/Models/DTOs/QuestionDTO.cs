@@ -1,6 +1,7 @@
 ﻿namespace Teacher_Service_API.Models.DTOs
 {
-    public class QuestionDTO(string testId,
+    public class QuestionDTO(string testId,       
+        string id,
         string question,
         string category,
         string option1,
@@ -10,6 +11,7 @@
         )
     {
         public string TestId { get; set; } = testId;
+        public string Id { get; set; } = id;
         public string Question { get; set; } = question;
         public string Category { get; set; } = category;
         public string Option1 { get; set; } = option1;

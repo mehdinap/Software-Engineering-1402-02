@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Teacher_Service_API.Models.Database.Repositories;
 using Teacher_Service_API.Models.DTOs;
@@ -19,7 +20,6 @@ namespace Teacher_Service_API.Controllers
         [HttpPost("add-exam")]
         public IActionResult AddExam(ExamDTO newExam)
         {
-            Console.WriteLine("we here");
             var id = _examRepository.AddExam(newExam);
             return Ok(id);
         }
@@ -38,5 +38,15 @@ namespace Teacher_Service_API.Controllers
             return Ok(exam);
         }
 
+        [HttpDelete("delete-exam/{examId}")]
+        public IActionResult DeleteExam(string examId)
+        {
+            var result = _examRepository.DeleteExam(examId);
+            if (result)
+            {
+                return NoContent();
+            }
+            return NotFound();
+        }
     }
 }

@@ -11,7 +11,7 @@ namespace Teacher_Service_API.Models.Validators
         public bool Validate()
         {
             return
-                _teacherRepository.AreEmailAndPasswordMatch(_emailSignInInfo).Result;               
+                _teacherRepository.AreEmailAndPasswordMatch(_emailSignInInfo);               
         }
     }
 }

@@ -6,13 +6,13 @@ namespace Teacher_Service_API.Models.Domain
 {
     public class Teacher
     {
-        private readonly CourseRepository _courseRepository = new CourseRepository(new DatabaseManager());
+        private readonly CourseRepository _courseRepository = new CourseRepository(new DatabaseManager(), new VideoFileRepository(), new ImageFileRepository(), new ExamRepository());
         public string Id { get; set; }
         public string FullName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
         public List<CourseDTO> courseDTOs { get; set; }
-
+        
         public Teacher(string id, string fullName, string email, string password)
         {
             Id = id;

@@ -11,11 +11,14 @@ namespace Teacher_Service_API.Controllers
     {
         private readonly TeacherRepository _teacherRepository;
         private readonly CourseRepository _courseRepository;
-
-        public CourseController(TeacherRepository teacherRepository, CourseRepository courseRepository)
+        private readonly VideoFileRepository _videoFileRepository;
+        private readonly ImageFileRepository _imageFileRepository;
+        public CourseController(TeacherRepository teacherRepository, CourseRepository courseRepository, VideoFileRepository videoFileRepository, ImageFileRepository imageFileRepository)
         {
             _teacherRepository = teacherRepository;
             _courseRepository = courseRepository;
+            _videoFileRepository = videoFileRepository;
+            _imageFileRepository = imageFileRepository;
         }
 
         [HttpPost("add-course/{teacherEmail}")]
@@ -54,18 +57,41 @@ namespace Teacher_Service_API.Controllers
             }
         }
 
-        //test
         [HttpGet("get-course/{id}")]
         public IActionResult GetCourseById(string id)
         {
             return Ok(_courseRepository.GetCourseById(id));
         }
 
+
         [HttpGet("get_videos_metadata/{courseId}")]
         public IActionResult GetVideosMetadata(string courseId)
         {
             var videosIds = _courseRepository.GetCourseVideosMetaData(courseId);
             return Ok(videosIds);
+        }
+
+        [HttpDelete("delete-course/{courseId}")]
+        public IActionResult DeleteCourse(string courseId)
+        {
+
+            var result = _courseRepository.DeleteCourse(courseId);
+            if (result)
+            {
+                return NoContent();
+            }
+            return NotFound();
+        }
+
+        [HttpDelete("delete-video/{videoId}")]
+        public IActionResult DeleteVideo(string videoId)
+        {
+            var result = _videoFileRepository.DeleteVideo(videoId);
+            if(result)
+            {
+                return NoContent();
+            }
+            return NotFound();
         }
     }
 }
