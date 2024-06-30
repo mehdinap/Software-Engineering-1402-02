@@ -8,7 +8,7 @@ namespace Teacher_Service_API.Models.Database.Repositories
     {
         private readonly DatabaseManager _databaseManager = databaseManager;
 
-        public Task<string> AddTeacherAsync(EmailSignUpInfo emailSignUpInfo)
+        public string AddTeacher(EmailSignUpInfo emailSignUpInfo)
         {
             var query = "Insert into teachers(Id, FullName, Email, Password) VALUES (@Id, @FullName, @Email, @Password)";
             var id = Guid.NewGuid().ToString();
@@ -22,10 +22,10 @@ namespace Teacher_Service_API.Models.Database.Repositories
                 connection.Open();
                 command.ExecuteNonQuery();
             }
-            return Task.FromResult(id);
+            return id;
         }
 
-        public Task<bool> AreEmailAndPasswordMatch(EmailSignInInfo emailLoginInfo)
+        public bool AreEmailAndPasswordMatch(EmailSignInInfo emailLoginInfo)
         {
             var query = "SELECT * From teachers WHERE Email = @Email AND Password = @Password";
             using (var connection = _databaseManager.GetConnection())
@@ -38,10 +38,10 @@ namespace Teacher_Service_API.Models.Database.Repositories
                 {
                     if (reader.Read())
                     {
-                        return Task.FromResult(true);
+                        return true;
                     }
                 }
-                return Task.FromResult(false);
+                return false;
             }
         }
 
@@ -85,7 +85,7 @@ namespace Teacher_Service_API.Models.Database.Repositories
             }
         }
 
-        public Task<bool> IsEmailUsedBefore(string email)
+        public bool IsEmailUsedBefore(string email)
         {
             var query = $"SELECT email FROM teachers WHERE email = @email";
 
@@ -98,11 +98,11 @@ namespace Teacher_Service_API.Models.Database.Repositories
                 {
                     if (reader.Read())
                     {
-                        return Task.FromResult(true);
+                        return true;
                     }
                     else
                     {
-                        return Task.FromResult(false);
+                        return false;
                     }
                 }
             }
@@ -125,18 +125,6 @@ namespace Teacher_Service_API.Models.Database.Repositories
                     return new Teacher(id, fullName, email, password);
                 }
             }
-        }
-
-        public Task RemoveTeacherAsync(string id)
-        {
-            //logic to remove from database
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateTeacherAsync(TeacherDTO teacherDTO)
-        {
-            //logic to update the teacher in database
-            throw new NotImplementedException();
-        }
+        }        
     }
 }

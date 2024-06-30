@@ -23,7 +23,7 @@ namespace Teacher_Service_API.Controllers
             var validationResult = validator.Validate();
             if (validationResult)
             {
-                var id = _teacherRepository.AddTeacherAsync(signUpInfo).Result;
+                var id = _teacherRepository.AddTeacher(signUpInfo);
                 return CreatedAtAction(nameof(GetTeacherById), new { id = id }, new { id = id });
             }
             else
@@ -35,7 +35,7 @@ namespace Teacher_Service_API.Controllers
         [HttpPost("email-check/{email}")]
         public IActionResult IsEmailDuplicated(string email)
         {
-            if (_teacherRepository.IsEmailUsedBefore(email).Result)
+            if (_teacherRepository.IsEmailUsedBefore(email))
             {
                 return BadRequest("duplicate-email");
             }
