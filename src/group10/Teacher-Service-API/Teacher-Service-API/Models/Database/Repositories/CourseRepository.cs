@@ -11,7 +11,7 @@ namespace Teacher_Service_API.Models.Database.Repositories
             _databaseManager = databaseManager;
         }
 
-        public Task<string> AddCourse(string teacherId, CourseDTO newCourse)
+        public string AddCourse(string teacherId, CourseDTO newCourse)
         {
             var query = "Insert Into Courses(TeacherId, Id, Name, Description, Objectives) VALUES (@TeacherId, @Id, @Name, @Description, @Objectives)";
             var id = Guid.NewGuid().ToString();
@@ -26,7 +26,7 @@ namespace Teacher_Service_API.Models.Database.Repositories
                 command.Parameters.AddWithValue("@Objectives", newCourse.Objectives);
                 command.ExecuteNonQuery();
             }
-            return Task.FromResult(id);
+            return id;
         }
 
 
@@ -55,7 +55,6 @@ namespace Teacher_Service_API.Models.Database.Repositories
             }
         }
 
-        //test
         public CourseDTO GetCourseById(string id)
         {
             var query = "Select * From Courses Where Id = @id";
@@ -97,12 +96,12 @@ namespace Teacher_Service_API.Models.Database.Repositories
             return result;
         }
 
-        public Task DeleteCourse(CourseDTO newCourse)
+        public bool DeleteCourse(CourseDTO newCourse)
         {
             throw new NotImplementedException();
         }
 
-        public Task UpdateCourse(CourseDTO newCourse)
+        public bool UpdateCourse(CourseDTO newCourse)
         {
             throw new NotImplementedException();
         }

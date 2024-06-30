@@ -32,7 +32,7 @@ namespace Teacher_Service_API.Models.Domain
                     return null;
                 }
             }
-            courseDTO.Id = _courseRepository.AddCourse(Id, courseDTO).Result;
+            courseDTO.Id = _courseRepository.AddCourse(Id, courseDTO);
             courseDTOs.Add(courseDTO);
             return courseDTO;
         }
