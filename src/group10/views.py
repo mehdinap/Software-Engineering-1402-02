@@ -50,11 +50,10 @@ def signup(request):
 
 
 def signin(request):
-    signup_in = SignInForm(request.POST)
-    if signup_in.is_valid():
-
-        email = signup_in.cleaned_data.get('email')
-        password = signup_in.cleaned_data.get('password')
+    sign_in = SignInForm(request.POST)
+    if sign_in.is_valid():
+        email = sign_in.cleaned_data.get('email')
+        password = sign_in.cleaned_data.get('password')
 
         url_str = "https://localhost:7071/teacher/SignInWithEmail"
         response = requests.post(url_str, json={'email': email, 'password': password}, verify=False)
@@ -69,7 +68,7 @@ def signin(request):
     else:
         context = {
             'signup_form': SignUpForm(),
-            'signin_form': signup_in,
+            'signin_form': sign_in,
             'is_authenticated': False,
         }
         return render(request, 'group10/html_files/index.html', context=context)
