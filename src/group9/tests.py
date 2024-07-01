@@ -1,8 +1,11 @@
 from django.test import TestCase
 
 # Create your tests here.
-
+import speech_recognition as sr
 import requests
+import io
+from pydub import AudioSegment
+
 
 file1 = open('myfile.txt', 'w')
 
@@ -55,6 +58,17 @@ def recommend_title(title):
 
     return res
 	
+
+def audio_to_text(data):
+    recognizer = sr.Recognizer()
+    audio_data = io.BytesIO(data.read())
+    audio = AudioSegment.from_file(audio_data, format="mp3")
+    audio.export("temp.wav", format="wav")
+    with sr.AudioFile("temp.wav") as source:
+        audio = recognizer.record(source)
+        text = recognizer.recognize_google(audio)
+    
+    return text
 
 def analysis_essay(essay):
     analysis = "Tell me the exact number of mistakes in my essay\n such as Grammar mistake and Spelling mistake or ...\nand specify the exact type of grammars that is incorrect. in this format -> grammar1. Simple present, grammar2. Simple past, grammar3. Present perfect, grammar4. Future simple	and ... \nBe sure to follow the format!!\nthis is my essay: \n" + essay

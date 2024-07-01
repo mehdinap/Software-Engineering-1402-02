@@ -16,6 +16,7 @@ urlpatterns = [
     path('speaking_bank2/', views.speaking_bank2, name='speaking_bank2'),
     path('speaking_bank3/', views.speaking_bank3, name='speaking_bank3'),
     path('first/', views.first_page, name='first'),
+    path('upload', views.upload_file, name='upload_file'),
 
 
 ] 
