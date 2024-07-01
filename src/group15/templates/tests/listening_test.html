@@ -1,0 +1,29 @@
+<!-- tests/templates/tests/listening_test.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Listening Test</title>
+</head>
+<body>
+    <h2>Listening Test</h2>
+
+    <!-- Audio element -->
+    <audio controls>
+        <source src=" {{ MEDIA_URL }}audio/audio_file.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio><br><br>
+
+    <!-- Form for questions -->
+    <form method="post" action="{% url 'submit_listening_test' %}">
+        {% csrf_token %}
+        {% for question in questions %}
+            <h3>Question {{ forloop.counter }}:</h3>
+            <p>{{ question.question_text }}</p>
+            <label for="answer_{{ question.id }}">Your Answer:</label><br>
+            <input type="text" id="answer_{{ question.id }}" name="answer_{{ question.id }}"><br><br>
+        {% endfor %}
+        <button type="submit">Submit Answers</button>
+    </form>
+</body>
+</html>
