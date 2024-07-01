@@ -1,10 +1,19 @@
 from django.contrib.auth.models import User
 from django.db.models import Count
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import FAQ, Chat, UserChat, Message
 from .serializers import FAQSerializer, ChatSerializer, MessageSerializer
+
+
+class ChatView(APIView):
+    def get(self, request):
+        return render(request, 'chat.html')
 
 
 class FAQChildrenView(APIView):
@@ -28,13 +37,8 @@ class FAQRootsView(APIView):
 
 class CreateChatView(APIView):
     def post(self, request):
-        user_id = request.data.get('user_id')
-        if not user_id:
-            return Response({'error': 'User ID is required'}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            user = User.objects.get(id=user_id)
-        except User.DoesNotExist:
+        user = request.user  # Use the authenticated user
+        if not user:
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
         # Find an available support user
@@ -67,15 +71,10 @@ class SendMessageView(APIView):
     def post(self, request):
         chat_id = request.data.get('chat_id')
         text = request.data.get('text')
-        sender_id = request.data.get('sender_id')
+        sender = request.user
 
-        if not all([chat_id, text, sender_id]):
-            return Response({'error': 'Chat ID, text, and sender ID are required'}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            sender = User.objects.get(id=sender_id)
-        except User.DoesNotExist:
-            return Response({'error': 'Sender not found'}, status=status.HTTP_404_NOT_FOUND)
+        if not all([chat_id, text, sender]):
+            return Response({'error': 'Chat ID, text, and user are required'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             chat = Chat.objects.get(id=chat_id)
