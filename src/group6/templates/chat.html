@@ -1,0 +1,31 @@
+<!-- templates/chat.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div id="chat-container">
+    <div id="faq-container">
+        <h2>FAQs</h2>
+        <div id="faq-list"></div>
+    </div>
+    <div id="chat-box">
+        <div id="messages"></div>
+        <div id="input-container">
+            <input type="text" id="message-input" placeholder="Type a message">
+            <button id="send-button">Send</button>
+            <button id="start-chat">Start Chat</button>
+            <input id="input-chat-id" placeholder="Chat id">
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/chat.js' %}"></script>
+</body>
+</html>
