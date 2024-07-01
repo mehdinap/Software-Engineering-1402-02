@@ -15,9 +15,9 @@ class SignUpForm(forms.Form):
     password = forms.CharField(required=True, widget=forms.PasswordInput(attrs={
         'placeholder': 'enter your password.',
         'class': 'form-control border-0 p-4'
-    }), min_length=8,  # Minimum length constraint
-                               max_length=50,  # Maximum length constraint
-                               help_text='Password should be at least 8 characters long.')  # Help text for the field)
+    }), min_length=8, max_length=16,
+                               help_text='Password should be at least 8 characters long and contain Lowercase, '
+                                         'Uppercase, Numbers and special characters.')
 
     def clean_email(self):
         email = self.cleaned_data.get('email')

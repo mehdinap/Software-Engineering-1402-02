@@ -19,7 +19,6 @@ namespace Teacher_Service_API.Controllers
         [HttpPost("add-question")]
         public IActionResult AddQustionToExam(QuestionDTO question)
         {
-            Console.WriteLine(question.Option1);
             _questionRepository.AddQuestion(question);
             return Ok();
         }
@@ -29,6 +28,16 @@ namespace Teacher_Service_API.Controllers
         {            
             var questions = _questionRepository.GetQuestionsOfExam(testId);
             return Ok(questions);
+        }
+
+        [HttpDelete("delete-question/{questionId}")]
+        public IActionResult DeleteQustion(string questionId)
+        {
+            if (_questionRepository.DeleteQuestion(questionId))
+            {
+                return NoContent();
+            }
+            return NotFound();
         }
     }
 }

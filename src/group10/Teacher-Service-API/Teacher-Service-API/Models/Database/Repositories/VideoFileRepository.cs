@@ -1,5 +1,4 @@
 ﻿using MySql.Data.MySqlClient;
-using Teacher_Service_API.Models.DTOs;
 
 namespace Teacher_Service_API.Models.Database.Repositories
 {
@@ -8,7 +7,7 @@ namespace Teacher_Service_API.Models.Database.Repositories
         private readonly DatabaseManager _databaseManager = new DatabaseManager();
         private const string path = "C:\\Users\\Asus\\Desktop";
 
-        public async Task AddCourseVideoFileAsync(string courseId,  string title, IFormFile file)
+        public async Task AddCourseVideoFileAsync(string courseId, string title, IFormFile file)
         {
             var fileId = Guid.NewGuid().ToString();
             var filePath = Path.Combine(path, "wwwroot", "uploads", fileId);
@@ -16,12 +15,12 @@ namespace Teacher_Service_API.Models.Database.Repositories
             {
                 await file.CopyToAsync(stream);
             }
-            var query = "Insert Into videos(courseId,videoId,Title) VALUES (@courseId,@videoId,@title)";
+            var query = "Insert Into group10_videos(courseId,videoId,Title) VALUES (@courseId,@videoId,@title)";
             using (var connection = _databaseManager.GetConnection())
             {
                 connection.Open();
                 var command = new MySqlCommand(query, connection);
-                command.Parameters.AddWithValue("@title",title);
+                command.Parameters.AddWithValue("@title", title);
                 command.Parameters.AddWithValue("@courseId", courseId);
                 command.Parameters.AddWithValue("@videoId", fileId);
                 command.ExecuteNonQuery();
@@ -30,7 +29,7 @@ namespace Teacher_Service_API.Models.Database.Repositories
 
         public byte[] GetCourseVideo(string videoId)
         {
-            var query = "select videoId from videos where videoId = @videoId";
+            var query = "select videoId from group10_videos where videoId = @videoId";
             using (var connection = _databaseManager.GetConnection())
             {
                 connection.Open();
@@ -55,8 +54,8 @@ namespace Teacher_Service_API.Models.Database.Repositories
 
         public List<string> GetCourseVideosIds(string courseId)
         {
-            var query = "select videoId from videos where courseId = @courseId";
-            using(var connection = _databaseManager.GetConnection())
+            var query = "select videoId from group10_videos where courseId = @courseId";
+            using (var connection = _databaseManager.GetConnection())
             {
                 connection.Open();
                 var command = new MySqlCommand(query, connection);
@@ -72,6 +71,62 @@ namespace Teacher_Service_API.Models.Database.Repositories
                 }
                 return result;
             }
+        }
+
+        public bool DeleteVideo(string videoId)
+        {
+            if (DeleteVideoDataFromTable(videoId) & DeleteVideoFile(videoId))
+            {
+                return true;
+            }
+            return false;
+        }
+        public bool DeleteAllVideoFilesOfCourse(string courseId)
+        {
+            var result = true;
+            var query = "select videoId from group10_videos where courseId = @courseId";
+            using (var connection = _databaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = new MySqlCommand(query, connection);
+                command.Parameters.AddWithValue("@courseId", courseId);
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var fileId = reader.GetString("videoId");
+                        var filePath = Path.Combine(path, "wwwroot", "uploads", fileId);
+                        if (!DeleteVideo(fileId))
+                        {
+                            result = false;
+                        }
+                    }
+                    return result;
+                }
+            }
+        }
+
+        private bool DeleteVideoDataFromTable(string fileId)
+        {
+            var query = "delete from group10_videos where videoId = @videoId";
+            using (var connection = _databaseManager.GetConnection())
+            {
+                connection.Open();
+                var command = new MySqlCommand(query, connection);
+                command.Parameters.AddWithValue("@videoId", fileId);
+                return command.ExecuteNonQuery() > 0;
+            }
+        }
+
+        private bool DeleteVideoFile(string fileId)
+        {
+            var filePath = Path.Combine(path, "wwwroot", "uploads", fileId);
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+                return true;
+            }
+            return false;
         }
     }
 }
