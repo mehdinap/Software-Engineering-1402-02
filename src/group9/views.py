@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django import forms
 from . import tests as app
+
 # Create your views here.
 
 
@@ -8,14 +9,20 @@ class TitleForm(forms.Form):
     title = forms.CharField(label="userTitle")
 class AnalysisForm(forms.Form):
     essay_form = forms.CharField(label="userEssay")
-
+class UploadFileForm(forms.Form):
+    file = forms.FileField()
 
 def index(request):
+    # f= request.GET['audio_file']
+    # if request.FILES['file']:
+    #     print("print in index")    
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            print("is valid")
 
-    latest_question_list = "hello world"
-    context = {"latest_question_list": latest_question_list}
         
-    return render(request, "./index.html", context)
+    return render(request, "./index.html",)
     
 def Simple_past_page(request):
     return render(request, "./simple_past.html")
@@ -51,6 +58,7 @@ def recom(request):
 
 
 def analysis (request):
+    context = {}
     if request.method == "POST":
         
         form = AnalysisForm(request.POST)
@@ -70,6 +78,35 @@ def analysis (request):
 
         if "future" in result:
             context['Future_simple'] = "Future simple"
-        
+    context['section_id'] = "writing_page"
+    return render(request, './index.html', context)
+    
+
+def upload_file(request):
+    print("in voice")
+    context={}
+    context['section_id'] = "speaking_page"
+    if request.method == 'POST':
+        uploaded_file = request.FILES['audio_file']
+        text = app.audio_to_text(uploaded_file)
+        analysis = app.analysis_essay(text)
+        context['analysis_result'] = analysis
         return render(request, './index.html', context)
-    pass
+    else:
+
+        return render(request, './index.html',context)
+    
+
+
+# def upload_file(request):
+#     if request.method == 'POST' and request.FILES['file']:
+#         uploaded_file = request.FILES['file']
+        
+#         # Process the uploaded file (e.g., save it to a specific location)
+#         with open('path/to/save/file.txt', 'wb+') as destination:
+#             for chunk in uploaded_file.chunks():
+#                 destination.write(chunk)
+        
+#         return render(request, 'upload_success.html')
+    
+#     return render(request, 'upload_form.html')
