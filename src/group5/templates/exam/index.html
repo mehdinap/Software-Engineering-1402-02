@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Page</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            padding-top: 70px;
+            /* Adjust padding to avoid overlap with fixed navbar */
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 20px;
+            animation: fadeIn 1s ease-in-out;
+            font-size: 2.5rem;
+        }
+
+        /* Navbar styles */
+        .navbar {
+            background-color: #007bff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: center;
+            /* Center align all content within the navbar */
+            align-items: center;
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            /* Make the navbar full-width */
+            top: 0;
+            border-radius: 0 0 10px 10px;
+            transition: background-color 0.3s ease;
+            z-index: 1000;
+        }
+
+        .navbar:hover {
+            background-color: #0056b3;
+        }
+
+        .navbar-links {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            /* Center align the navbar links */
+            flex-wrap: wrap;
+        }
+
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .navbar a:hover {
+            background-color: #dcdcdc;
+            color: #007bff;
+            transform: scale(1.1);
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 5px solid #007bff;
+            /* Add a blue border for visual separation */
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .question {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+            animation: fadeInUp 1s ease-in-out;
+        }
+
+        .choices {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .choice-button {
+            flex: 1 1 calc(33% - 10px);
+            padding: 15px;
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            font-size: 1.2rem;
+            /* Increased font size */
+        }
+
+        .choice-button.correct {
+            background-color: #28a745;
+            /* Green for correct answer */
+        }
+
+        .choice-button.incorrect {
+            background-color: #dc3545;
+            /* Red for incorrect answer */
+        }
+
+        .choice-button.disabled {
+            pointer-events: none;
+            /* Disable pointer events for answered questions */
+            opacity: 0.7;
+            /* Reduce opacity for answered questions */
+        }
+
+        .choice-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .choice-button:active {
+            transform: scale(0.95);
+        }
+
+        .choice-button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+        }
+
+        /* Statistics Box */
+        .statistics {
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+            animation: slideIn 1s ease-in-out;
+        }
+
+        .statistics.show {
+            display: block;
+        }
+
+        /* Animation Keyframes */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-links">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'exam' %}">Exam</a>
+            {% if request.user.is_authenticated %}
+            <a href="{% url 'logout' %}">Logout</a>
+            {% else %}
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'signup' %}">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+    <div class="container">
+        <h1>Exam Questions</h1>
+        <div id="examQuestions">
+            {% for question in questions %}
+            <div class="card">
+                <div class="question">{{ question.question.text }}</div>
+                <div class="choices">
+                    {% for choice in question.choices %}
+                    <button type="button" class="choice-button"
+                        onclick="selectAnswer(this, '{{ choice }}', '{{ question.question.answer }}')">
+                        {{ choice }}
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div id="statisticsBox" class="statistics">
+            <h2>Exam Statistics</h2>
+            <p>Number of correct answers: <span id="correctCount">0</span></p>
+            <p>Number of incorrect answers: <span id="incorrectCount">0</span></p>
+            <p>Percentage of correct answers: <span id="percentCorrect">0%</span></p>
+        </div>
+    </div> 
+    <script>
+        var correctAnswers = 0, incorrectAnswers = 0;
+        function selectAnswer(button, selectedChoice, correctAnswer) {
+            // Compare selected choice with correct answer
+            if (selectedChoice === correctAnswer) {
+                button.classList.add('correct');
+                correctAnswers++;
+            } else {
+                // Find the correct button and make it green
+                Array.from(button.parentNode.children).forEach(btn => {
+                    if (btn.textContent.trim() === correctAnswer) {
+                        btn.classList.add('correct');
+                    }
+                });
+                button.classList.add('incorrect');
+                incorrectAnswers++;
+            }
+
+            // Disable all buttons for this question
+            Array.from(button.parentNode.children).forEach(btn => {
+                btn.classList.add('disabled');
+            });
+
+            // Check if all questions are answered
+            if (document.querySelectorAll('.choice-button.disabled').length === document.querySelectorAll('.choice-button').length) {
+                showStatistics();
+            }
+        }
+
+        function showStatistics() {
+            let totalQuestions = correctAnswers + incorrectAnswers;
+            let percentCorrect = ((correctAnswers / totalQuestions) * 100).toFixed(2) + ' / 100';
+
+            // Update statistics box
+            document.getElementById('correctCount').textContent = correctAnswers;
+            document.getElementById('incorrectCount').textContent = incorrectAnswers;
+            document.getElementById('percentCorrect').textContent = percentCorrect;
+
+            // Show statistics box
+            let statisticsBox = document.getElementById('statisticsBox');
+            statisticsBox.classList.add('show');
+        }
+
+
+    </script>
+</body>
+
+</html>
