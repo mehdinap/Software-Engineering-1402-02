@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>essay help</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f7f7f7;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    .container {
+        background-color: #fff;
+        padding: 200px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: 100%;
+    }
+    input[type="text"], textarea {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    button {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    a {
+        background-color: red;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h2>Essay Help</h2>
+    <form action="./recom_title" method="post">
+        {% csrf_token %}
+        <label for="userTitle">Enter your title:</label>
+        <input type="text" id="userTitle" name="userTitle" placeholder="Your title..." value="{{ title }}">
+        <button type="submit">Recommend subject</button>
+    </form>
+
+    <p></p>
+    <label for="recommendedTitles">Recommended titles:</label>
+    <textarea id="correctedEssay" name="correctedEssay" rows="6" placeholder="titles will appear here..." readonly>{{ titles }}</textarea>
+    <p></p>
+    <form action="./analysis_essay" method="post">
+        {% csrf_token %}
+        <label for="userEssay">Write your essay...</label>
+        <textarea id="userEssay" name="userEssay" rows="6" placeholder="Write your essay here...">{{essay}}</textarea>
+        <button type="submit">Correcting essay</button>
+    </form>
+    <p></p>
+    <form action="./submit_essay" method="post">
+        <label for="correctedEssay">Corrected essay:</label>
+        <textarea id="correctedEssay" name="correctedEssay" rows="6" placeholder="Corrected essay will appear here..." readonly>{{analysis}}</textarea>
+        <button type="submit">Submit</button>
+    </form>
+    <p></p>
+    <p></p>
+    {% if Simple_past %}
+        <a href="{% url 'simple_past' %}">{{Simple_past}}</a>
+    {% endif %}
+
+    {% if Present_continuous %}
+        <a href="{% url 'present_count' %}">{{Present_continuous}}</a>
+    {% endif %}
+
+    {% if Simple_present %}
+        <a href="{% url 'simple_present' %}">{{Simple_present}}</a>
+    {% endif %}
+
+    {% if Present_perfect %}
+        <a href="{% url 'present_perfect' %}">{{Present_perfect}}</a>
+    {% endif %}
+    
+    {% if Past_continuous %}
+        <a href="{% url 'past_count' %}">{{Past_continuous}}</a>
+    {% endif %}    
+    
+    {% if Future_simple %}
+        <a href="{% url 'future_simple' %}">{{Future_simple}}</a>
+    {% endif %}
+
+</div>
+</body>
+</html>

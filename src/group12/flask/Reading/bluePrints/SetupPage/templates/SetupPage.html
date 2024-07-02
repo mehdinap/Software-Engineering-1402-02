@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReadIt</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/SetupPage.css') }}">
+</head>
+<body>
+    <header>
+        <h1>ReadIt</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#create-exam">Practice mode</a></li>
+            <li><a href="#practice">Exam mode</a></li>
+            <li><a href="#view-results">See results</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section id="create-exam">
+            <h2>Exam mode</h2>
+            <form action="{{ url_for('ExamPage.createExam') }}" method="post">
+                <label for="exam-level">Choose your exam level:</label>
+                <select id="exam-level" name="level">
+                    <option value="1">easy</option>
+                    <option value="2">medium</option>
+                    <option value="3">hard</option>
+                </select>
+                <button type="submit">Start exam</button>
+            </form>
+        </section>
+
+        <section id="practice">
+            <h2>Practice mode</h2>
+            <form action="{{ url_for('PracticePage.createPractice') }}" method="post">
+                <label for="practice-level">Choose your practice level:</label>
+                <select id="practice-level" name="practice-level">
+                    <option value="1">easy</option>
+                    <option value="2">medium</option>
+                    <option value="3">hard</option>
+                </select>
+
+                <label for="number-of-readings">Choose the number of readings (max 5):</label>
+                <select id="number-of-readings" name="number-of-readings">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+                
+                <button type="submit">Start practice</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 پلتفرم آموزش زبان</p>
+    </footer>
+</body>
+</html>

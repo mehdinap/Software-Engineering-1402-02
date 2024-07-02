@@ -1,0 +1,114 @@
+<!-- ExamPage.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Learning Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/examm.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>English Learning Platform</h1>
+
+        {% for passage_index, reading in enumerate(readings) %}
+        <div class="reading-section" id="reading{{ passage_index + 1 }}">
+            <h2>{{ reading.title }}</h2>
+            <p>{{ reading.content }}</p>
+        </div>
+        <div class="questions-section" id="questions{{ passage_index + 1 }}">
+            <h2>Questions for Passage {{ passage_index + 1 }}</h2>
+            {% for question_index, question in enumerate(reading.questions) %}
+            <div class="question">
+                <p>{{ question_index + 1 }}. {{ question.content }}</p>
+                <ul>
+                    <li>
+                        <label>
+                            <input type="radio" name="question{{ passage_index + 1 }}_{{ question_index + 1 }}" value="0">
+                            A) {{ question.choice1 }}
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            <input type="radio" name="question{{ passage_index + 1 }}_{{ question_index + 1 }}" value="1">
+                            B) {{ question.choice2 }}
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            <input type="radio" name="question{{ passage_index + 1 }}_{{ question_index + 1 }}" value="2">
+                            C) {{ question.choice3 }}
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            <input type="radio" name="question{{ passage_index + 1 }}_{{ question_index + 1 }}" value="3">
+                            D) {{ question.choice4 }}
+                        </label>
+                    </li>
+                </ul>
+            </div>
+            {% endfor %}
+            <button id="submit-btn{{ passage_index + 1 }}" onclick="checkAnswers({{ passage_index + 1 }})">Submit</button>
+            <button id="translation-btn{{ passage_index + 1 }}" onclick="showTranslation({{ passage_index + 1 }})">See Translation</button>
+            <div id="result{{ passage_index + 1 }}"></div>
+            <div id="translation-text{{ passage_index + 1 }}" style="display: none;">
+                <h2>Translation</h2>
+                <p>
+                    {{ reading.translation }}
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+    
+    </div>
+   
+    <script>
+        var correctAnswers = {
+            {% for passage_index, reading in enumerate(readings) %}
+            {{ passage_index + 1 }}: [
+                {% for question in reading.questions %}
+                {% for answer in [question.choice1, question.choice2, question.choice3, question.choice4] %}
+                {% if answer == question.correct_choice %}
+                {{ loop.index0 }},
+                {% endif %}
+                {% endfor %}
+                {% endfor %}
+            ],
+            {% endfor %}
+        };
+
+        function checkAnswers(passage) {
+            var userAnswers = [];
+            var correctCount = correctAnswers[passage].length;
+
+            for (var i = 1; i <= correctCount; i++) {
+                var radios = document.getElementsByName('question' + passage + '_' + i);
+                for (var j = 0; j < radios.length; j++) {
+                    if (radios[j].checked) {
+                        userAnswers.push(parseInt(radios[j].value));
+                        if (parseInt(radios[j].value) === correctAnswers[passage][i - 1]) {
+                            radios[j].parentNode.style.backgroundColor = '#d4edda'; // Green for correct answers
+                        }
+                    }
+                    if (parseInt(radios[j].value) === correctAnswers[passage][i - 1]) {
+                        radios[j].parentNode.style.border = '2px solid #28a745'; // Green border for the correct answer
+                    }
+                }
+            }
+
+            var score = 0;
+            for (var i = 0; i < correctAnswers[passage].length; i++) {
+                if (userAnswers[i] === correctAnswers[passage][i]) {
+                    score++;
+                }
+            }
+            document.getElementById('result' + passage).innerHTML = 'You scored ' + score + ' out of ' + correctAnswers[passage].length + '.';
+        }
+
+        function showTranslation(passage) {
+            document.getElementById('translation-text' + passage).style.display = 'block';
+        }
+    </script>
+</body>
+</html>

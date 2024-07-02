@@ -1,0 +1,23 @@
+{% load static %}
+<!-- writing_test_part1.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writing Test - Part 1</title>
+</head>
+<body>
+    <h2>Writing Test - Part 1</h2>
+    <p>{{ task.question_text }}</p>
+    <img src="{% static '1.jpeg' %}" alt="Example Image">
+
+    <form method="post">
+        {% csrf_token %}
+        <label for="id_answer">Your Answer:</label><br>
+        {{ form.answer }}
+        <br><br>
+        <button type="submit">Next: Part 2</button>
+    </form>
+</body>
+</html>

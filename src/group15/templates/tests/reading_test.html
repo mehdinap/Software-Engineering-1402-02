@@ -1,0 +1,22 @@
+<!-- tests/templates/tests/reading_test.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reading Test</title>
+</head>
+<body>
+    <h2>Reading Test</h2>
+    <p>{{ passage_text }}</p>
+
+    <form method="post" action="{% url 'submit_reading_test' %}">
+        {% csrf_token %}
+        {% for question in questions %}
+            <p>{{ question.question_text }}</p>
+            <textarea name="answer_{{ question.id }}" rows="4" cols="50"></textarea><br><br>
+        {% endfor %}
+        <button type="submit">Submit Answers</button>
+    </form>
+</body>
+</html>

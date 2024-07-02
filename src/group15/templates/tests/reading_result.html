@@ -1,0 +1,21 @@
+<!-- tests/templates/tests/reading_result.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reading Test Result</title>
+</head>
+<body>
+    <h2>Reading Test Result</h2>
+    <p>Your score: {{ score }}</p>
+    <p>Correct answers:</p>
+    <ul>
+        {% for question_id, correct_answer in correct_answers.items %}
+            <li>Question {{ question_id }}: {{ correct_answer }}</li>
+        {% endfor %}
+    </ul>
+    <br>
+    <a href="{% url 'home' %}"><button>Go to Home</button></a>
+</body>
+</html>
