@@ -1,0 +1,35 @@
+<!-- templates/tests/speaking_test.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Speaking Test</title>
+</head>
+<body>
+    <h1>Speaking Test</h1>
+    
+    <h2>Part 1</h2>
+    <ul>
+        {% for question in part1_questions %}
+            <li>{{ question.question_text }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Part 2</h2>
+    <ul>
+        {% for question in part2_questions %}
+            <li>{% autoescape off %}{{ question.question_text|linebreaksbr }}{% endautoescape %}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Part 3</h2>
+    <ul>
+        {% for question in part3_questions %}
+            <li>{{ question.question_text }}</li>
+        {% endfor %}
+    </ul>
+
+    <form action="{% url 'home' %}" method="get">
+        <button type="submit">End Test</button>
+    </form>
+</body>
+</html>

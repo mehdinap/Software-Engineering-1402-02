@@ -1,0 +1,23 @@
+<!-- tests/templates/tests/listening_result.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Listening Result</title>
+</head>
+<body>
+    <h1>Listening Result</h1>
+    <p>Your score: {{ score }}</p>
+    <p>Correct Answers:</p>
+    <ul>
+        {% for question_id, correct_answer in correct_answers.items %}
+            <li>
+                <strong>Question {{ question_id }}:</strong>
+                <br>
+                <em>Correct Answer:</em> {{ correct_answer }}
+            </li>
+        {% endfor %}
+    </ul>
+    <br>
+    <a href="{% url 'home' %}"><button>Go to Home</button></a>
+</body>
+</html>

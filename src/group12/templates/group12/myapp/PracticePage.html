@@ -1,0 +1,154 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Learning Platform</title>
+    <link rel="stylesheet" href="{% static 'css/examm.css' %}">
+    <style>
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        .header p {
+            margin: 5px 0 0;
+            font-size: 1.2em;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Practice Mode</h1>
+        <p>Level: 
+            {% if readings.0.level == 1 %}
+                Easy
+            {% elif readings.0.level == 2 %}
+                Medium
+            {% elif readings.0.level == 3 %}
+                Hard
+            {% endif %}
+        </p>
+    </div>
+    <div class="container">
+        <h1>English Learning Platform</h1>
+
+        {% for reading in readings %}
+        <div class="reading-section">
+            <h2>Passage {{ forloop.counter }}</h2>
+            <p>{{ reading.content }}</p>
+        </div>
+        <div class="questions-section">
+            <h2>Questions for Passage {{ forloop.counter }}</h2>
+            {% for question in reading.questions.all %}
+            <div class="question">
+                <p>{{ forloop.counter }}. {{ question.content }}</p>
+                <ul>
+                    <li>
+                        <label>
+                            <input type="radio" name="question{{ forloop.parentloop.counter }}_{{ forloop.counter }}" value="0">
+                            A) {{ question.choice1 }}
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            <input type="radio" name="question{{ forloop.parentloop.counter }}_{{ forloop.counter }}" value="1">
+                            B) {{ question.choice2 }}
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            <input type="radio" name="question{{ forloop.parentloop.counter }}_{{ forloop.counter }}" value="2">
+                            C) {{ question.choice3 }}
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            <input type="radio" name="question{{ forloop.parentloop.counter }}_{{ forloop.counter }}" value="3">
+                            D) {{ question.choice4 }}
+                        </label>
+                    </li>
+                </ul>
+            </div>
+            {% endfor %}
+            <button id="submit-btn{{ forloop.counter }}" onclick="checkAnswers({{ forloop.counter }})">Submit</button>
+            <button id="translation-btn{{ forloop.counter }}" onclick="showTranslation({{ forloop.counter }})">See Translation</button>
+            <div id="result{{ forloop.counter }}"></div>
+            <div id="translation-text{{ forloop.counter }}" style="display: none;">
+                <h2>Translation</h2>
+                <p>{{ reading.translation }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+   
+    <script>
+        var correctAnswers = {
+            {% for reading in readings %}
+            {{ forloop.counter }}: [
+                {% for question in reading.questions.all %}
+                {% if question.correct_choice == question.choice1 %}
+                0,
+                {% elif question.correct_choice == question.choice2 %}
+                1,
+                {% elif question.correct_choice == question.choice3 %}
+                2,
+                {% elif question.correct_choice == question.choice4 %}
+                3,
+                {% endif %}
+                {% endfor %}
+            ],
+            {% endfor %}
+        };
+
+        function checkAnswers(passage) {
+            var userAnswers = [];
+            var correctCount = correctAnswers[passage].length;
+
+            for (var i = 1; i <= correctCount; i++) {
+                var radios = document.getElementsByName('question' + passage + '_' + i);
+                for (var j = 0; j < radios.length; j++) {
+                    if (radios[j].checked) {
+                        userAnswers.push(parseInt(radios[j].value));
+                        if (parseInt(radios[j].value) === correctAnswers[passage][i - 1]) {
+                            radios[j].parentNode.style.backgroundColor = '#d4edda'; // Green for correct answers
+                        }
+                    }
+                    if (parseInt(radios[j].value) === correctAnswers[passage][i - 1]) {
+                        radios[j].parentNode.style.border = '2px solid #28a745'; // Green border for the correct answer
+                    }
+                }
+            }
+
+            var score = 0;
+            for (var i = 0; i < correctAnswers[passage].length; i++) {
+                if (userAnswers[i] === correctAnswers[passage][i]) {
+                    score++;
+                }
+            }
+            document.getElementById('result' + passage).innerHTML = 'You scored ' + score + ' out of ' + correctAnswers[passage].length + '.';
+        }
+
+        function showTranslation(passage) {
+            document.getElementById('translation-text' + passage).style.display = 'block';
+        }
+    </script>
+</body>
+</html>
