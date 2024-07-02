@@ -17,6 +17,7 @@ class Question(models.Model):
     choice4 = models.CharField(max_length=200)
     correct_choice = models.CharField(max_length=200)
     reading = models.ForeignKey(Reading, on_delete=models.CASCADE, related_name='questions')
+    
 
     def __str__(self):
         return f'Question {self.id}'
