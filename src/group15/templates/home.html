@@ -1,0 +1,17 @@
+<!-- templates/home.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+</head>
+<body>
+    <h1>Welcome to the IELTS Test Portal</h1>
+    <p>Choose a test section to start:</p>
+    <ul>
+        <li><a href="{% url 'listening_test' %}">Listening Test</a></li>
+        <li><a href="{% url 'reading_test' %}">Reading Test</a></li>
+        <li><a href="{% url 'writing_test_part1' %}">Writing Test</a></li>
+        <li><a href="{% url 'speaking_test' %}">Speaking Test</a></li>
+    </ul>
+</body>
+</html>

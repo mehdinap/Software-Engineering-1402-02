@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <title>سرویس‌های آموزش زبان انگلیسی</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            display: flex;
+            justify-content: center;
+            background-color: #333;
+            padding: 10px;
+        }
+        .navbar a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+        }
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        .content {
+            padding: 20px;
+            text-align: center;
+        }
+        .content div {
+            display: none;
+        }
+
+
+
+        .speaking {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .speaking .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .speaking h2 {
+            text-align: center;
+            color: #333;
+        }
+        .speaking form {
+            margin-top: 20px;
+        }
+        .speaking input[type="file"] {
+            margin-bottom: 10px;
+        }
+
+        .speaking .button-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .speaking button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .speaking textarea {
+            width: 95%;
+            height: 200px;
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: vertical;
+        }   
+
+     
+        .speaking .button2 {
+            background-color: green;
+            color: #fff;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+
+
+
+
+
+
+
+
+
+
+        .essay {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            display: none;
+        }
+        .essay .container {
+            background-color: #fff;
+            padding: 200px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+        .essay input[type="text"], textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .essay button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .essay a {
+            background-color: red;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+
+
+        .options-container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .option {
+            display: block;
+            padding: 10px 20px;
+            margin: 10px 0;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #333;
+            transition: background-color 0.3s;
+        }
+
+        .option:hover {
+            background-color: #afe8dbe1;
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <a href="#" id="speaking_page" onclick="showSection('speaking')">تمرین Speaking</a>
+    <a href="#" id="writing_page" onclick="showSection('essay')">نوشتن انشا</a>
+    <a href="#" onclick="showSection('grammar')">آموزش گرامر</a>
+    <!-- <a href="#" onclick="showSection('{{section_id}}')">آموزش گرامر</a> -->
+</div>
+
+<div class="content">
+    <div id="speaking" class="speaking">
+    
+        <h2>IELTS Speaking Question Bank</h2>
+    
+        <form class="button-container">
+            <a href="{% url 'speaking_bank1' %}" class="button2">Task 1</a>
+            <a href="{% url 'speaking_bank2' %}" class="button2">Task 2</a>
+            <a href="{% url 'speaking_bank3' %}" class="button2">Task 3</a>
+        </form>
+
+        <section class="container">
+            <h2>Analyze Voice</h2>
+            <form  id="uploadForm" action="./upload" method="post" enctype="multipart/form-data" >
+                {% csrf_token %}
+                <input type="file" name="audio_file" required>
+                <button type="submit" id="submitButton">Upload your voice file</button>
+            </form>
+            {% if analysis_result %}
+                <h2>Analysis Result:</h2>
+                <textarea id="analysisResult" readonly>{{ analysis_result }}</textarea>
+            {% endif %}
+        </section>
+    </div>
+    <div id="essay" class="essay">
+            <h1>Essay Help</h1>
+            <form action="./recom_title" method="post">
+                {% csrf_token %}
+                <label for="userTitle">Enter your title:</label>
+                <input type="text" id="userTitle" name="userTitle" placeholder="Your title..." value="{{ title }}">
+                <button type="submit">Recommend subject</button>
+            </form>
+        
+            <p></p>
+            <label for="recommendedTitles">Recommended titles:</label>
+            <textarea id="correctedEssay" name="correctedEssay" rows="6" placeholder="titles will appear here..." readonly>{{ titles }}</textarea>
+            <p></p>
+            <form action="./analysis_essay" method="post">
+                {% csrf_token %}
+                <label for="userEssay">Write your essay...</label>
+                <textarea id="userEssay" name="userEssay" rows="6" placeholder="Write your essay here...">{{essay}}</textarea>
+                <button type="submit">Correcting essay</button>
+            </form>
+            <p></p>
+            {% if analysis %}
+            <form action="./submit_essay" method="post">
+                <label for="correctedEssay">Corrected essay:</label>
+                <textarea id="correctedEssay" name="correctedEssay" rows="6" placeholder="Corrected essay will appear here..." readonly>{{analysis}}</textarea>
+                <button type="submit">Submit</button>
+            </form>
+            {% endif %}
+            <p></p>
+            {% if Simple_past %}
+                <a href="{% url 'simple_past' %}">{{Simple_past}}</a>
+            {% endif %}
+        
+            {% if Present_continuous %}
+                <a href="{% url 'present_count' %}">{{Present_continuous}}</a>
+            {% endif %}
+        
+            {% if Simple_present %}
+                <a href="{% url 'simple_present' %}">{{Simple_present}}</a>
+            {% endif %}
+        
+            {% if Present_perfect %}
+                <a href="{% url 'present_perfect' %}">{{Present_perfect}}</a>
+            {% endif %}
+            
+            {% if Past_continuous %}
+                <a href="{% url 'past_count' %}">{{Past_continuous}}</a>
+            {% endif %}    
+            
+            {% if Future_simple %}
+                <a href="{% url 'future_simple' %}">{{Future_simple}}</a>
+            {% endif %}
+    </div>
+    <div id="grammar" class="options-container">
+        
+            <a href="{% url 'simple_past' %}" class="option">Simple Past</a>
+            <a href="{% url 'present_count' %}" class="option">Present Count</a>
+            <a href="{% url 'simple_present' %}" class="option">Simple Present</a>
+            <a href="{% url 'present_perfect' %}" class="option">Present Perfect</a>
+            <a href="{% url 'past_count' %}" class="option">Past Count</a>
+            <a href="{% url 'future_simple' %}" class="option">Future Simple</a>
+        
+    </div>
+</div>
+
+<script>
+    var section_id = "{{ section_id }}";
+    console.log("section_id:", section_id);
+    if (section_id){
+        console.log("in sectiona:");
+        console.log(section_id);
+        var navbar_button = document.getElementById(section_id);
+        console.log(navbar_button.className)
+        navbar_button.click();
+
+    }
+
+    function showSection(sectionId) {
+        const sections = document.querySelectorAll('.content div');
+        sections.forEach(section => {
+            if (section.id != sectionId){
+                section.style.display = 'none';
+            }
+            else{
+                section.style.display = 'block';
+            }
+        });
+    }
+
+
+    // $(document).ready(function() {
+    //     $('#submitButton').click(function() {
+    //         $('#uploadForm').attr('action', './voice_analysis');
+    //         $('#uploadForm').submit();
+    //     });
+    // });
+
+</script>
+
+</body>
+</html>

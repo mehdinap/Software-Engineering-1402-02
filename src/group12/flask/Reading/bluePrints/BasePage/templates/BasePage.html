@@ -1,0 +1,124 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReadIt - Learn English</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 1em 0;
+            text-align: center;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .intro {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .intro h1 {
+            margin-bottom: 10px;
+        }
+        .intro p {
+            font-size: 1.2em;
+        }
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        .feature {
+            background-color: rgba(255, 255, 255, 0.511);
+            border: 1px solid #dddddd5b;
+            border-radius: 5px;
+            width: 300px;
+            margin: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+        .feature img {
+            max-width: 100%;
+            border-bottom: 1px solid #dddddd5b;
+            margin-bottom: 10px;
+        }
+        .feature h2 {
+            margin-bottom: 10px;
+        }
+        .feature p {
+            font-size: 1em;
+        }
+        .start-button {
+            display: block;
+            width: 250px;
+            margin: 30px auto;
+            padding: 20px;
+            text-align: center;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1.5em;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        .start-button:hover {
+            background-color: #134f2ec7;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .button-container {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to ReadIt</h1>
+    </header>
+    <div class="container">
+        <div class="intro">
+            <h1>Learn English the Smart Way</h1>
+            <p>Join ReadIt to enhance your English skills with interactive lessons, engaging content, personalized progress tracking, and real-time feedback.</p>
+        </div>
+        <div class="features">
+            <div class="feature">
+                <img src="{{ url_for('static', filename='Image/photo_2024-06-28_13-55-18.jpg') }}">
+                <h2>Interactive Lessons</h2>
+                <p>Engage with our dynamic lessons that adapt to your learning pace.</p>
+            </div>
+            <div class="feature">
+                <img src="{{ url_for('static', filename='Image/RandomReading.jpg') }}">
+                <h2>Engaging Content</h2>
+                <p>Learn with content that keeps you interested and motivated.</p>
+            </div>
+            <div class="feature">
+                <img src="{{ url_for('static', filename='Image/RandomWoman.jpg') }}">
+                <h2>Real-time Feedback</h2>
+                <p>Receive instant feedback to help you improve quickly.</p>
+            </div>
+        </div>
+        <div class="button-container">
+            <form >
+                <button class="start-button" type="submit">Start Reading</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+
